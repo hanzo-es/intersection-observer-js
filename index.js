@@ -47,11 +47,15 @@ const inViewport = (params) => {
     if (!entry.isIntersecting) {
       entry.target.removeAttribute(_dataDir);
     } else {
-      let direction = entry.target.getAttribute(_dataPos);
-      if(direction && direction !== _txtInter) {
-        entry.target.setAttribute(_dataDir, `from-${direction}`);
-      } else { // default onload value
-        entry.target.setAttribute(_dataDir, `from-${_txtBelow}`);
+      let direction = entry.target.getAttribute(_dataDir);
+      let position = entry.target.getAttribute(_dataPos);
+      if(position && position !== _txtInter) {
+        entry.target.setAttribute(_dataDir, `from-${position}`);
+      } else { 
+        // default onload value, 
+        // also takes into account multiple thresholds
+        let fromPos = direction || `from-${_txtBelow}`;
+        entry.target.setAttribute(_dataDir, fromPos);
       }
     }
   };
