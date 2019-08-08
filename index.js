@@ -4,7 +4,8 @@
  * Starts an intersectionObserver applied to an array of elements.
  * Sets following `data-*` attributes (customisable) on each target:
  * `data-in-viewport-direction` from-above/from-below
- * `data-in-viewport-position` above/below/intersecting if a threshold % of the target is in viewport
+ * `data-in-viewport-position` above/below/intersecting
+ * if a threshold % of the target is in viewport
  *
  * @name inViewport
  * @type {Object}
@@ -27,13 +28,13 @@ const inViewport = (params) => {
   if (!$elements) return; // halt silently
 
   // sets custom/default data names
-  const _dataDir = (dataDir)? dataDir : 'data-in-viewport-direction';
-  const _dataPos = (dataPos)? dataPos : 'data-in-viewport-position';
+  const _dataDir = dataDir || 'data-in-viewport-direction';
+  const _dataPos = dataPos || 'data-in-viewport-position';
 
   // sets custom/default data values
-  const _txtInter = (txtInter)? txtInter : 'intersecting';
-  const _txtAbove = (txtAbove)? txtAbove : 'above';
-  const _txtBelow = (txtBelow)? txtBelow : 'below';
+  const _txtInter = txtInter || 'intersecting';
+  const _txtAbove = txtAbove || 'above';
+  const _txtBelow = txtBelow || 'below';
 
   // checks for valid callback function to apply
   const noop = () => {};
@@ -47,14 +48,14 @@ const inViewport = (params) => {
     if (!entry.isIntersecting) {
       entry.target.removeAttribute(_dataDir);
     } else {
-      let direction = entry.target.getAttribute(_dataDir);
-      let position = entry.target.getAttribute(_dataPos);
-      if(position && position !== _txtInter) {
+      const direction = entry.target.getAttribute(_dataDir);
+      const position = entry.target.getAttribute(_dataPos);
+      if (position && position !== _txtInter) {
         entry.target.setAttribute(_dataDir, `from-${position}`);
-      } else { 
-        // default onload value, 
+      } else {
+        // default onload value,
         // also takes into account multiple thresholds
-        let fromPos = direction || `from-${_txtBelow}`;
+        const fromPos = direction || `from-${_txtBelow}`;
         entry.target.setAttribute(_dataDir, fromPos);
       }
     }
@@ -75,20 +76,20 @@ const inViewport = (params) => {
     entry.target.setAttribute(_dataPos, position);
   };
 
-  const updateIntersection = (entry) => {
-    if (entry.isIntersecting) {
-      inHook(entry);
-    } else {
-      outHook(entry);
-    }
-  };
-
   const inHook = (entry) => {
     applyFunction(inCallback)(entry);
   };
 
   const outHook = (entry) => {
     applyFunction(outCallback)(entry);
+  };
+
+  const updateIntersection = (entry) => {
+    if (entry.isIntersecting) {
+      inHook(entry);
+    } else {
+      outHook(entry);
+    }
   };
 
   const endHook = (entry) => {
